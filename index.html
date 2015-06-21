@@ -32,10 +32,14 @@
       <script src="js/jsonld.js"></script>
 <!--      papaparse - parser for csv files-->
       <script src="js/papaparse.min.js"></script>
+<!--      Loading counter-->      
+      <script src="js/pace.min.js"></script>
+      <link href="css/minimal.css" rel="stylesheet" />
       
   </head>
 
   <body>
+      <div class="pace"></div> 
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
@@ -64,18 +68,21 @@
     <div class="container">
 
       <div class="starter-template">
-        <h1>Nothing to see!</h1>
-        <p class="lead">I'm just prototyping :).<br>
+        <h1>Please, select a VCF file!</h1>
+        <p class="lead"> Here VCF files can be converted to the RDF format<br>
             If curious, open Developer Console.</p>
       </div>
 
-      <div class="starter-template">
+      <div class="starter-template" id="vcfInput">
+        <span class="btn btn-default btn-file">
         <input type="file" id="fileInput" name="files[]" multiple />
+        </span>
         <output id="list"></output>
 
       </div>
       
       <div>
+          <p class="lead">Rquads will appear below</p>
         <pre id="fileDisplayArea"><pre>
       </div>
 

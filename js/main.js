@@ -11,9 +11,14 @@ window.onload = function() {
 
 				reader.onload = function(e) {
 
-				    vcf2rdf(reader.result, function(a){
-				        var lala = a;
-					   fileDisplayArea.innerText = lala;
+				    vcf2rdf(reader.result, function(res){
+                                        var blob = URL.createObjectURL(new Blob([res]));
+                                            a = document.createElement("a");
+                                            a.href = blob;
+                                            a.download = 'myquad.nq';
+                                            a.innerText = 'Save output';
+                                            document.getElementById("vcfInput").appendChild( a );
+                                            fileDisplayArea.innerText = res;
 					})
 
 
