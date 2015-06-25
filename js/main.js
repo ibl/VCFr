@@ -10,22 +10,30 @@ window.onload = function() {
 				var reader = new FileReader();
 
 				reader.onload = function(e) {
-
-				    vcf2rdf(reader.result, function(res){
+                                    //load vcf object as global
+                                    vcf = parse_vcf(reader.result)
+                                    //create button obj
+                                    btn = document.createElement("button");
+                                    btn.innerText = "Send JsonLd to Console";
+                                    btn.className = "btn btn-default btn-file";
+                                    btn.onclick = function(){
+                                        vcf2jsonLd(vcf, function(a){vcfJsonLd = a})
+                                    };
+                                    
+                                    document.getElementById("secondaryButtons").appendChild(btn);
+				    
+                                    console.log("vcf object avaliable")
+                                    
+                                    vcf2rdf(reader.result, function(res){
                                         var blob = URL.createObjectURL(new Blob([res]));
                                             a = document.createElement("a");
                                             a.href = blob;
+                                            a.className = "btn btn-default btn-file";
                                             a.download = 'myquad.nq';
                                             a.innerText = 'Save output';
-                                            document.getElementById("vcfInput").appendChild( a );
+                                            document.getElementById("secondaryButtons").appendChild( a );
                                             fileDisplayArea.innerText = res;
 					})
-
-
-				    console.log(parse_vcf(reader.result));
-					
-// 					fileDisplayArea.innerText = JSON.stringify( parse_vcf(reader.result) , null, 4);
-					
 
 				}
 
