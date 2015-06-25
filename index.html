@@ -34,7 +34,7 @@
       <script src="js/papaparse.min.js"></script>
 <!--      Loading counter-->      
       <script src="js/pace.min.js"></script>
-      <link href="css/minimal.css" rel="stylesheet" />
+      <link href="css/loadingBar.css" rel="stylesheet" />
       
   </head>
 
@@ -56,8 +56,6 @@
           <ul class="nav navbar-nav">
             <li class="active"><a href="#">Home</a></li>
             <li><a href="#about">About</a></li>
-            <li><a href="">Load Data</a></li>
-            <li><a href="">Parse VCF</a></li>
             <li><a href="">Show Plots</a></li>
             <li><a href="#contact">Contact</a></li>
           </ul>
@@ -69,8 +67,11 @@
 
       <div class="starter-template">
         <h1>Please, select a VCF file!</h1>
-        <p class="lead"> Here VCF files can be converted to the RDF format<br>
-            If curious, open Developer Console.</p>
+        <p class="lead"> Here VCF files can be converted to JSON-LD and Nquads format<br>
+            After parsing, there will be a vcf object avaliable<br>
+            If you want, you can have vcfJsonLd too. <br>
+            Just Open the Developer Console if you want to take a look at then<br>
+        </p>
       </div>
 
       <div class="starter-template" id="vcfInput">
@@ -78,6 +79,13 @@
         <input type="file" id="fileInput" name="files[]" multiple />
         </span>
         <output id="list"></output>
+        
+<!--        <span class="btn btn-default btn-file" id="secondaryButtons">
+        </span>-->
+        
+        <div id="secondaryButtons">
+        </div>
+            
 
       </div>
       

@@ -4,7 +4,8 @@
 /*jslint es5: true */
 
 var mydomain = "http://diegopenhanut.github.io/vcf-resources/v4_2/";
-
+var vcfJson={};
+var vcfJsonLd={};
 
 // test variables
 // var mystring = '##fileformat=VCFv4.0\n\
@@ -252,6 +253,39 @@ function keyValueToJson(resourceName, url) {
     return JSON.parse(res);
 }
 
+function vcf2jsonLd(vcfObj, callback) {
+    var docContext = [];
+    var res=[];
+    var i;
+    var out;
+
+    Papa.parse("https://rawgit.com/diegopenhanut/vcf-resources/gh-pages/v4_2/structure.csv", {
+	   download: true,
+	   complete: function(csv) {
+           console.log("csv Loaded");
+           for (var i = 0 ; i < csv["data"].length; i++){
+           		res[i]=csv["data"][i][0];
+            }
+            docContext = keyValueToJson(res , mydomain);
+           //vcf = parse_vcf(vcfObj);
+            vcfObj["@context"] = set_context_rec(mydomain, vcfObj);	
+            $.extend( true , docContext, vcfObj);
+//             console.log(JSON.stringify(docContext, null, 4));
+            callback(docContext);
+            console.log("vcfJsonLd object avaliable")
+            
+	   }
+    });
+}
+
+function vcfJsonLd2nq(vcfJsonLdObj, callback){
+    jsonld.toRDF(vcfJsonLdObj, {format: 'application/nquads'}, function(err, nquads) {
+        callback(nquads);
+    });
+}
+
+
+
 function vcf2rdf(vcfString, callback) {
     
     // service that alows to serve raw content of github
@@ -285,20 +319,4 @@ function vcf2rdf(vcfString, callback) {
             	});
 	   }
     });
-    
-    
-
-//     
-
-
-//     
-
-//     console.log(parse_vcf(shortstring))    ;
-//     var lele;
-//     var lala=JSON.parse('{"head":{"INFO_ID_DB":{"Number":"0","Type":"Flag","Description":"dbSNP membership"},"INFO_ID_VT":{"Number":"1","Type":"String","Description":"Variant type"},"INFO_ID_DP":{"Number":"1","Type":"Integer","Description":"Total Depth across samples"},"FORMAT_ID_GT":{"Number":"1","Type":"String","Description":"Genotype"},"FORMAT_ID_DP":{"Number":"1","Type":"Integer","Description":"Read depth at this position in the sample"},"FORMAT_ID_BQ":{"Number":".","Type":"Integer","Description":"Average base quality for reads supporting alleles"},"SAMPLE_ID_PRIMARY":{"SampleUUID":"8f583981-b257-43ee-9c9e-71a192a49d38","SampleTCGABarcode":"TCGA-AN-A0FN-01A-11W-A050-09","Individual":"TCGA-AN-A0FN","Description":"Primary Tumor"}},"body":{"row_9":{"CHROM":"1","POS":"888659","ID":"rs3748597","REF":"T","ALT":"C","QUAL":"81.0","FILTER":"PASS","INFO":"DB;VT=SNP;DP=41","FORMAT":"GT:DP:AD","PRIMARY":"1/1:21:0,21"}},"@context":{"head":"http://diegopenhanut.github.io/vcf-resources/v4_2/head","INFO_ID_DB":"http://diegopenhanut.github.io/vcf-resources/v4_2/INFO_ID_DB","Number":"http://diegopenhanut.github.io/vcf-resources/v4_2/Number","Type":"http://diegopenhanut.github.io/vcf-resources/v4_2/Type","Description":"http://diegopenhanut.github.io/vcf-resources/v4_2/Description","INFO_ID_VT":"http://diegopenhanut.github.io/vcf-resources/v4_2/INFO_ID_VT"," can be SNP":"http://diegopenhanut.github.io/vcf-resources/v4_2/ can be SNP"," INS or DEL":"http://diegopenhanut.github.io/vcf-resources/v4_2/ INS or DEL","INFO_ID_DP":"http://diegopenhanut.github.io/vcf-resources/v4_2/INFO_ID_DP","FORMAT_ID_GT":"http://diegopenhanut.github.io/vcf-resources/v4_2/FORMAT_ID_GT","FORMAT_ID_DP":"http://diegopenhanut.github.io/vcf-resources/v4_2/FORMAT_ID_DP","FORMAT_ID_BQ":"http://diegopenhanut.github.io/vcf-resources/v4_2/FORMAT_ID_BQ","SAMPLE_ID_PRIMARY":"http://diegopenhanut.github.io/vcf-resources/v4_2/SAMPLE_ID_PRIMARY","SampleUUID":"http://diegopenhanut.github.io/vcf-resources/v4_2/SampleUUID","SampleTCGABarcode":"http://diegopenhanut.github.io/vcf-resources/v4_2/SampleTCGABarcode","Individual":"http://diegopenhanut.github.io/vcf-resources/v4_2/Individual","body":"http://diegopenhanut.github.io/vcf-resources/v4_2/body","row_9":"http://diegopenhanut.github.io/vcf-resources/v4_2/row_9","CHROM":"http://diegopenhanut.github.io/vcf-resources/v4_2/CHROM","POS":"http://diegopenhanut.github.io/vcf-resources/v4_2/POS","ID":"http://diegopenhanut.github.io/vcf-resources/v4_2/ID","REF":"http://diegopenhanut.github.io/vcf-resources/v4_2/REF","ALT":"http://diegopenhanut.github.io/vcf-resources/v4_2/ALT","QUAL":"http://diegopenhanut.github.io/vcf-resources/v4_2/QUAL","FILTER":"http://diegopenhanut.github.io/vcf-resources/v4_2/FILTER","INFO":"http://diegopenhanut.github.io/vcf-resources/v4_2/INFO","FORMAT":"http://diegopenhanut.github.io/vcf-resources/v4_2/FORMAT","PRIMARY":"http://diegopenhanut.github.io/vcf-resources/v4_2/PRIMARY"}}');
-    
-// 	jsonld.toRDF(lala, {format: 'application/nquads'}, function(err, nquads) {lele = nquads ; console.log(lele) });
-    
-// 	console.log("#################");
-
 }
