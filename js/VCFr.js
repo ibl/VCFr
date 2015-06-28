@@ -104,14 +104,14 @@ var set_context_rec = function generate_context(domain, object) {
 
 
 function parse_head_line(head_line) {
-	var res, key, i, h;
+    var res, key, i, h;
     res = {};
-	res.data = {};
+    res.data = {};
 
-	head_line = head_line.slice(2); //drop ## at start of the line
+    head_line = head_line.slice(2); //drop ## at start of the line
         
-   	head_line = head_line.match(/([^\,\<]+=\"[^\>]+)|([^\,\<]+=[^\,\>]+)/g)
-        .map(function (a) {return a.split("="); });
+    head_line = head_line.match(/([^\,\<]+=\"[^\>]+)|([^\,\<]+=[^\,\>]+)/g)
+            .map(function (a) {return a.split("="); });
 
     if (head_line[0].length === 3 && head_line[0][1] === "<ID" && head_line[0][0] !== "") {
         key = head_line[0][0] + "_ID_" + head_line[0][2];
@@ -119,12 +119,15 @@ function parse_head_line(head_line) {
         for (i = 1; i < head_line.length; i += 1) {
             h = head_line[i];
             res.data[h[0]] = h[1];
+            //res.data["@type"] = "";
+            //res.data["@type"] = mydomain+head_line[0][0];
         }
 
     } else if (head_line[0].length === 2 && head_line[0][0] !== "") {
         res.name = head_line[0][0];
         res.data = head_line[0][1];
     }
+
 	return res;
 }
 
@@ -139,10 +142,9 @@ function parse_info(INFO) {
 	var res = {};
 	res.INFO = {};
 	
-	INFO
-		.split(";")
-		.map(function (a) {
-			return a.split("=");
+	INFO.split(";")
+                .map(function (a) {
+                    return a.split("=");
 		})
 		.map(function (a) {
 			if (a.length === 1) {
@@ -153,7 +155,8 @@ function parse_info(INFO) {
 				console.log("error found on INFO field.");
 			}
 		});
-
+                
+             
 	return res;
 }
 
@@ -307,7 +310,6 @@ function vcf2rdf(vcfString, callback) {
 			vcf = parse_vcf(vcfString);
 			vcf["@context"] = set_context_rec(mydomain, vcf);
 			
-			//console.log(JSON.stringify(vcf, null, 4));
            	
            	$.extend( true , docContext, vcf);
 //             console.log("########")
@@ -319,4 +321,9 @@ function vcf2rdf(vcfString, callback) {
             	});
 	   }
     });
+}
+
+function getGenes(){
+Papa.parse("https://rawgit.com/ibl/VCFr/gh-pages/resources/allGenes.txt",  
+{download: true, complete: function(csv) { console.log(csv)}})    
 }
