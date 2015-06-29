@@ -120,8 +120,9 @@ function parse_head_line(head_line) {
             h = head_line[i];
             res.data[h[0]] = h[1];
             //res.data["@type"] = "";
-            //res.data["@type"] = mydomain+head_line[0][0];
+            //res.data["@type"] = "v:" + head_line[0][0];
         }
+        res.data["@type"] = "v:" + head_line[0][0];
 
     } else if (head_line[0].length === 2 && head_line[0][0] !== "") {
         res.name = head_line[0][0];
@@ -256,6 +257,26 @@ function keyValueToJson(resourceName, url) {
     return JSON.parse(res);
 }
 
+function addPrefix(prefix, obj){
+    var build, key, value;
+
+    build = {};
+    for (key in obj) {
+        value = obj[key];
+        if (key != "@type"){
+            if (typeof value === "object") {
+                value = addPrefix(prefix, value);
+            }
+            build[prefix + key] = value;
+        } else {
+            build[key] = value;
+        }
+            
+    }
+    return build;
+}
+
+
 function vcf2jsonLd(vcfObj, callback) {
     var docContext = [];
     var res=[];
@@ -269,12 +290,16 @@ function vcf2jsonLd(vcfObj, callback) {
            for (var i = 0 ; i < csv["data"].length; i++){
            		res[i]=csv["data"][i][0];
             }
-            docContext = keyValueToJson(res , mydomain);
-           //vcf = parse_vcf(vcfObj);
-            vcfObj["@context"] = set_context_rec(mydomain, vcfObj);	
-            $.extend( true , docContext, vcfObj);
+           // docContext = keyValueToJson(res , mydomain);
+           // vcf = parse_vcf(vcfObj);
+            // vcfObj["@context"] = set_context_rec(mydomain, vcfObj);
+            vcfObj = addPrefix("v:", vcfObj);
+            vcfObj["@context"] = {};
+            vcfObj["@context"].v = mydomain;
+            
+            // $.extend( true , docContext, vcfObj);
 //             console.log(JSON.stringify(docContext, null, 4));
-            callback(docContext);
+            callback(vcfObj);
             console.log("vcfJsonLd object avaliable")
             
 	   }
@@ -305,20 +330,26 @@ function vcf2rdf(vcfString, callback) {
            for (var i = 0 ; i < csv["data"].length; i++){
            		res[i]=csv["data"][i][0];
            }
-			docContext = keyValueToJson(res , mydomain);
+			//docContext = keyValueToJson(res , mydomain);
 			
 			vcf = parse_vcf(vcfString);
-			vcf["@context"] = set_context_rec(mydomain, vcf);
+			//vcf["@context"] = set_context_rec(mydomain, vcf);
+                        
+                        vcf2jsonLd(vcf, function(a){
+                            jsonld.toRDF(a, {format: 'application/nquads'}, function(err, nquads) {
+                                out = nquads; 
+                                callback(out);
+                            });
+                        });
+                      
 			
            	
-           	$.extend( true , docContext, vcf);
+           	// $.extend( true , docContext, vcf);
+                //             
 //             console.log("########")
 //             console.log(JSON.stringify(docContext, null, 4));
 
-            jsonld.toRDF(docContext, {format: 'application/nquads'}, function(err, nquads) {
-            	out = nquads; 
-            	callback(out);
-            	});
+            
 	   }
     });
 }
@@ -327,3 +358,4 @@ function getGenes(){
 Papa.parse("https://rawgit.com/ibl/VCFr/gh-pages/resources/allGenes.txt",  
 {download: true, complete: function(csv) { console.log(csv)}})    
 }
+
