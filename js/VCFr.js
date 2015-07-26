@@ -141,36 +141,32 @@ function parse_format(FORMAT) {
 
 function parse_info(INFO) {
 	var res = {};
-	res.INFO = {};
-	
 	INFO.split(";")
                 .map(function (a) {
                     return a.split("=");
 		})
 		.map(function (a) {
 			if (a.length === 1) {
-				res.INFO[a[0]] = true;
+				res["INFO_ID_" + a[0]] = true;
 			} else if (a.length === 2) {
-				res.INFO[a[0]] = a[1];
+				res["INFO_ID_" + a[0]] = a[1];
 			} else if (a.length === 3) {
 				console.log("error found on INFO field.");
 			}
 		});
-                
-             
 	return res;
 }
 
 
 function parse_sample(FORMAT, Sample) {
 	var res = {}, i;
-	res.FORMAT = {};
+	// res.FORMAT = {};
 	Sample = Sample.split(":");
 	if (FORMAT.length !== Sample.length) {
 		console.log("FORMAT does not have the same length of Sample");
 	} else {
 		for (i = 0; i < FORMAT.length; i += 1) {
-			res.FORMAT[FORMAT[i]] = Sample[i];
+			res[FORMAT[i]] = Sample[i];
 		}
 	}
 	return res;
@@ -208,17 +204,51 @@ function parse_colnames(colnames) {
 }
 
 function parse_body_line(body_line, colnames, n_line) {
-	var res = {}, i, myobj;
-	res.name = "";
-	body_line = body_line.split(/\t/);
-	myobj = {};
-	for (i = 0; i < body_line.length; i += 1) {
-		myobj[colnames[i]] = body_line[i];
-	}
-
-	res.name = "row_" + n_line;
-	res.data = myobj;
-	return res;
+    var res = {}, i, myobj;
+    res.name = "";
+    body_line = body_line.split(/\t/);
+    myobj = {};
+    for (i = 0; i < body_line.length; i += 1) {
+        var fieldname = colnames[i];
+        var value = body_line[i];
+        myobj[fieldname] = value;
+        switch(fieldname) {
+            case "CHROM":
+                myobj[fieldname] = value;
+                break;
+            case "POS":
+                myobj[fieldname] = value;
+                break;
+            case "ID":
+                myobj[fieldname] = value;
+                break;
+            case "REF":
+                myobj[fieldname] = value;
+                break;
+            case "QUAL":
+                myobj[fieldname] = value;
+                break;
+            case "FILTER":
+                myobj[fieldname] = value;
+                break;
+            case "ALT":
+                myobj[fieldname] = parse_alt(value);
+            case "INFO":
+                myobj[fieldname] = parse_info(value);
+                break;
+            case "FORMAT":
+                myobj[fieldname] = parse_format(value);
+                break;
+            default:
+                myobj[fieldname] = parse_sample(myobj["FORMAT"],value);
+                
+            
+            
+        }
+    }
+    res.name = "row_" + n_line;
+    res.data = myobj;
+    return res;
 }
 
 function parse_vcf(vcf) {
@@ -248,10 +278,10 @@ function keyValueToJson(resourceName, url) {
     var res = '{"@context":{';
     var i;
     for (i=0; i<resourceName.length ; i++){
-        res = res + '"' + resourceName[i] + '":"' + url + resourceName[i] + '",'
+        res = res + '"' + resourceName[i] + '":"' + url + resourceName[i] + '",';
     }
     if (res.endsWith(",")){
-        res = res.substring(0, res.length-1)
+        res = res.substring(0, res.length-1);
     }
     res = res + "}}";
     return JSON.parse(res);
@@ -263,7 +293,7 @@ function addPrefix(prefix, obj){
     build = {};
     for (key in obj) {
         value = obj[key];
-        if (key != "@type"){
+        if (key !== "@type"){
             if (typeof value === "object") {
                 value = addPrefix(prefix, value);
             }
@@ -300,7 +330,7 @@ function vcf2jsonLd(vcfObj, callback) {
             // $.extend( true , docContext, vcfObj);
 //             console.log(JSON.stringify(docContext, null, 4));
             callback(vcfObj);
-            console.log("vcfJsonLd object avaliable")
+            console.log("vcfJsonLd object avaliable");
             
 	   }
     });
