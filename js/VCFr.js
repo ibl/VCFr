@@ -104,14 +104,14 @@ var set_context_rec = function generate_context(domain, object) {
 
 
 function parse_head_line(head_line) {
-	var res, key, i, h;
+    var res, key, i, h;
     res = {};
-	res.data = {};
+    res.data = {};
 
-	head_line = head_line.slice(2); //drop ## at start of the line
+    head_line = head_line.slice(2); //drop ## at start of the line
         
-   	head_line = head_line.match(/([^\,\<]+=\"[^\>]+)|([^\,\<]+=[^\,\>]+)/g)
-        .map(function (a) {return a.split("="); });
+    head_line = head_line.match(/([^\,\<]+=\"[^\>]+)|([^\,\<]+=[^\,\>]+)/g)
+            .map(function (a) {return a.split("="); });
 
     if (head_line[0].length === 3 && head_line[0][1] === "<ID" && head_line[0][0] !== "") {
         key = head_line[0][0] + "_ID_" + head_line[0][2];
@@ -119,12 +119,16 @@ function parse_head_line(head_line) {
         for (i = 1; i < head_line.length; i += 1) {
             h = head_line[i];
             res.data[h[0]] = h[1];
+            //res.data["@type"] = "";
+            //res.data["@type"] = "v:" + head_line[0][0];
         }
+        res.data["@type"] = "v:" + head_line[0][0];
 
     } else if (head_line[0].length === 2 && head_line[0][0] !== "") {
         res.name = head_line[0][0];
         res.data = head_line[0][1];
     }
+
 	return res;
 }
 
@@ -137,36 +141,32 @@ function parse_format(FORMAT) {
 
 function parse_info(INFO) {
 	var res = {};
-	res.INFO = {};
-	
-	INFO
-		.split(";")
-		.map(function (a) {
-			return a.split("=");
+	INFO.split(";")
+                .map(function (a) {
+                    return a.split("=");
 		})
 		.map(function (a) {
 			if (a.length === 1) {
-				res.INFO[a[0]] = true;
+				res["INFO_ID_" + a[0]] = true;
 			} else if (a.length === 2) {
-				res.INFO[a[0]] = a[1];
+				res["INFO_ID_" + a[0]] = a[1];
 			} else if (a.length === 3) {
 				console.log("error found on INFO field.");
 			}
 		});
-
 	return res;
 }
 
 
 function parse_sample(FORMAT, Sample) {
 	var res = {}, i;
-	res.FORMAT = {};
+	// res.FORMAT = {};
 	Sample = Sample.split(":");
 	if (FORMAT.length !== Sample.length) {
 		console.log("FORMAT does not have the same length of Sample");
 	} else {
 		for (i = 0; i < FORMAT.length; i += 1) {
-			res.FORMAT[FORMAT[i]] = Sample[i];
+			res[FORMAT[i]] = Sample[i];
 		}
 	}
 	return res;
@@ -174,22 +174,23 @@ function parse_sample(FORMAT, Sample) {
 
 function parse_gt(gt) {
 	var res = {};
-	res.gt = {};
+        res.gtString = gt; //preserve original string
 	gt = gt.split(/([\/\|])/);
+        
 
 	if (gt.length > 3) {
 		console.log("polyploid found, parser is compromised");
 	} else if (gt.length === 3) {
-		res.gt.firstParentalAllele = gt[0];
-		res.gt.secondParentalAllele = gt[2];
+		res.firstParentalAllele = gt[0];
+		res.secondParentalAllele = gt[2];
 
 		if (gt[1] === "|") {
-			res.gt.phased = true;
+			res.phased = true;
 		} else if (gt[1] === "/") {
-			res.gt.phased = false;
+			res.phased = false;
 		}
 	} else if (gt.length === 1) {
-		res.gt.allele = gt[0];
+		res.allele = gt[0];
 	}
 
 	return res;
@@ -204,17 +205,52 @@ function parse_colnames(colnames) {
 }
 
 function parse_body_line(body_line, colnames, n_line) {
-	var res = {}, i, myobj;
-	res.name = "";
-	body_line = body_line.split(/\t/);
-	myobj = {};
-	for (i = 0; i < body_line.length; i += 1) {
-		myobj[colnames[i]] = body_line[i];
-	}
-
-	res.name = "row_" + n_line;
-	res.data = myobj;
-	return res;
+    var res = {}, i, myobj;
+    res.name = "";
+    body_line = body_line.split(/\t/);
+    myobj = {};
+    for (i = 0; i < body_line.length; i += 1) {
+        var fieldname = colnames[i];
+        var value = body_line[i];
+        myobj[fieldname] = value;
+        switch(fieldname) {
+            case "CHROM":
+                myobj[fieldname] = value;
+                break;
+            case "POS":
+                myobj[fieldname] = value;
+                break;
+            case "ID":
+                myobj[fieldname] = value;
+                break;
+            case "REF":
+                myobj[fieldname] = value;
+                break;
+            case "QUAL":
+                myobj[fieldname] = value;
+                break;
+            case "FILTER":
+                myobj[fieldname] = value;
+                break;
+            case "ALT":
+                myobj[fieldname] = parse_alt(value);
+            case "INFO":
+                myobj[fieldname] = parse_info(value);
+                break;
+            case "FORMAT":
+                myobj[fieldname] = parse_format(value);
+                break;
+            default:
+                myobj[fieldname] = parse_sample(myobj["FORMAT"],value);
+                myobj[fieldname]["FORMAT_ID_GT"] = parse_gt(myobj[fieldname]["FORMAT_ID_GT"])
+                
+            
+            
+        }
+    }
+    res.name = "row_" + n_line;
+    res.data = myobj;
+    return res;
 }
 
 function parse_vcf(vcf) {
@@ -244,14 +280,34 @@ function keyValueToJson(resourceName, url) {
     var res = '{"@context":{';
     var i;
     for (i=0; i<resourceName.length ; i++){
-        res = res + '"' + resourceName[i] + '":"' + url + resourceName[i] + '",'
+        res = res + '"' + resourceName[i] + '":"' + url + resourceName[i] + '",';
     }
     if (res.endsWith(",")){
-        res = res.substring(0, res.length-1)
+        res = res.substring(0, res.length-1);
     }
     res = res + "}}";
     return JSON.parse(res);
 }
+
+function addPrefix(prefix, obj){
+    var build, key, value;
+
+    build = {};
+    for (key in obj) {
+        value = obj[key];
+        if (key !== "@type"){
+            if (typeof value === "object") {
+                value = addPrefix(prefix, value);
+            }
+            build[prefix + key] = value;
+        } else {
+            build[key] = value;
+        }
+            
+    }
+    return build;
+}
+
 
 function vcf2jsonLd(vcfObj, callback) {
     var docContext = [];
@@ -266,13 +322,17 @@ function vcf2jsonLd(vcfObj, callback) {
            for (var i = 0 ; i < csv["data"].length; i++){
            		res[i]=csv["data"][i][0];
             }
-            docContext = keyValueToJson(res , mydomain);
-           //vcf = parse_vcf(vcfObj);
-            vcfObj["@context"] = set_context_rec(mydomain, vcfObj);	
-            $.extend( true , docContext, vcfObj);
+           // docContext = keyValueToJson(res , mydomain);
+           // vcf = parse_vcf(vcfObj);
+            // vcfObj["@context"] = set_context_rec(mydomain, vcfObj);
+            vcfObj = addPrefix("v:", vcfObj);
+            vcfObj["@context"] = {};
+            vcfObj["@context"].v = mydomain;
+            
+            // $.extend( true , docContext, vcfObj);
 //             console.log(JSON.stringify(docContext, null, 4));
-            callback(docContext);
-            console.log("vcfJsonLd object avaliable")
+            callback(vcfObj);
+            console.log("vcfJsonLd object avaliable");
             
 	   }
     });
@@ -302,21 +362,32 @@ function vcf2rdf(vcfString, callback) {
            for (var i = 0 ; i < csv["data"].length; i++){
            		res[i]=csv["data"][i][0];
            }
-			docContext = keyValueToJson(res , mydomain);
+			//docContext = keyValueToJson(res , mydomain);
 			
 			vcf = parse_vcf(vcfString);
-			vcf["@context"] = set_context_rec(mydomain, vcf);
+			//vcf["@context"] = set_context_rec(mydomain, vcf);
+                        
+                        vcf2jsonLd(vcf, function(a){
+                            jsonld.toRDF(a, {format: 'application/nquads'}, function(err, nquads) {
+                                out = nquads; 
+                                callback(out);
+                            });
+                        });
+                      
 			
-			//console.log(JSON.stringify(vcf, null, 4));
            	
-           	$.extend( true , docContext, vcf);
+           	// $.extend( true , docContext, vcf);
+                //             
 //             console.log("########")
 //             console.log(JSON.stringify(docContext, null, 4));
 
-            jsonld.toRDF(docContext, {format: 'application/nquads'}, function(err, nquads) {
-            	out = nquads; 
-            	callback(out);
-            	});
+            
 	   }
     });
 }
+
+function getGenes(){
+Papa.parse("https://rawgit.com/ibl/VCFr/gh-pages/resources/allGenes.txt",  
+{download: true, complete: function(csv) { console.log(csv)}})    
+}
+
