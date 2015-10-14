@@ -174,22 +174,23 @@ function parse_sample(FORMAT, Sample) {
 
 function parse_gt(gt) {
 	var res = {};
-	res.gt = {};
+        res.gtString = gt; //preserve original string
 	gt = gt.split(/([\/\|])/);
+        
 
 	if (gt.length > 3) {
 		console.log("polyploid found, parser is compromised");
 	} else if (gt.length === 3) {
-		res.gt.firstParentalAllele = gt[0];
-		res.gt.secondParentalAllele = gt[2];
+		res.firstParentalAllele = gt[0];
+		res.secondParentalAllele = gt[2];
 
 		if (gt[1] === "|") {
-			res.gt.phased = true;
+			res.phased = true;
 		} else if (gt[1] === "/") {
-			res.gt.phased = false;
+			res.phased = false;
 		}
 	} else if (gt.length === 1) {
-		res.gt.allele = gt[0];
+		res.allele = gt[0];
 	}
 
 	return res;
@@ -241,6 +242,7 @@ function parse_body_line(body_line, colnames, n_line) {
                 break;
             default:
                 myobj[fieldname] = parse_sample(myobj["FORMAT"],value);
+                myobj[fieldname]["FORMAT_ID_GT"] = parse_gt(myobj[fieldname]["FORMAT_ID_GT"])
                 
             
             
