@@ -1,0 +1,10 @@
+##fileformat=VCFv4.0
+##INFO=<ID=DB,Number=0,Type=Flag,Description=\"dbSNP membership">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Total Depth across samples">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read depth at this position in the sample">
+##FORMAT=<ID=BQ,Number=.,Type=Integer,Description="Average base quality for reads supporting alleles">
+##SAMPLE=<ID=PRIMARY,SampleUUID=8f583981-b257-43ee-9c9e-71a192a49d38,SampleTCGABarcode=TCGA-AN-A0FN-01A-11W-A050-09,Individual=TCGA-AN-A0FN,Description="Primary Tumor">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	PRIMARY
+1	888659	rs3748597	T	C	81.0	PASS	DB;VT=SNP;DP=41	GT:DP:AD	1/1:21:0,21;
+1	988659	.	A	T	10.0	PASS	DB;VT=notfound;DP=30	GT:DP:AD	0/1:20:0,11;
