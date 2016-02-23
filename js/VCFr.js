@@ -158,6 +158,7 @@ function parse_body_line(body_line, colnames, n_line) {
                 break;
             case "ALT":
                 myobj[fieldname] = parse_alt(value);
+                break;
             case "INFO":
                 myobj[fieldname] = parse_info(value);
                 break;
@@ -166,7 +167,7 @@ function parse_body_line(body_line, colnames, n_line) {
                 break;
             default:
                 myobj[fieldname] = parse_sample(myobj["FORMAT"],value);
-                myobj[fieldname]["FORMAT_ID_GT"] = parse_gt(myobj[fieldname]["FORMAT_ID_GT"])
+                myobj[fieldname]["FORMAT_ID_GT"] = parse_gt(myobj[fieldname]["FORMAT_ID_GT"]);
         }
     }
     res.name = "row_" + n_line;
@@ -231,10 +232,10 @@ function addPrefix(prefix, obj){
 
 
 function vcf2jsonLd(vcfObj, callback) {
-    var docContext = [];
-    var res=[];
-    var i;
-    var out;
+//    var docContext = [];
+      var res=[];
+//    var i;
+//    var out;
 
     Papa.parse("https://rawgit.com/diegopenhanut/vcf-resources/gh-pages/v4_2/structure.csv", {
 	   download: true,
@@ -266,35 +267,38 @@ function vcfJsonLd2nq(vcfJsonLdObj, callback){
 function vcf2rdf(vcfString, callback) {
     
     // service that alows to serve raw content of github
-    var docContext = [];
+//  var docContext = [];
     var vcf;
     var res=[];
-    var i;
+//  var i;
     var out;
 
     Papa.parse("https://rawgit.com/diegopenhanut/vcf-resources/gh-pages/v4_2/structure.csv", {
-	   download: true,
-	   complete: function(csv) {
+        download: true,
+	    complete: function(csv) {
            console.log("csv Loaded");
+           
            for (var i = 0 ; i < csv["data"].length; i++){
            		res[i]=csv["data"][i][0];
-           }
-			
-			vcf = parse_vcf(vcfString);
-                        
-                        vcf2jsonLd(vcf, function(a){
-                            jsonld.toRDF(a, {format: 'application/nquads'}, function(err, nquads) {
-                                out = nquads; 
-                                callback(out);
-                            });
-                        });
-            
-	   }
+            }
+
+            vcf = parse_vcf(vcfString);
+
+            vcf2jsonLd(vcf, function(a){
+                jsonld.toRDF(a, {format: 'application/nquads'}, function(err, nquads) {
+                    out = nquads; 
+                    callback(out);
+                });
+            });
+        }
     });
 }
 
-function getGenes(){
-    Papa.parse("https://rawgit.com/ibl/VCFr/gh-pages/resources/allGenes.txt",  
-    {download: true, complete: function(csv) { console.log(csv)}})    
+function getGenes(){Papa.parse("https://rawgit.com/ibl/VCFr/gh-pages/resources/allGenes.txt",
+        {download: true,
+         complete: function(csv) { 
+            console.log(csv);
+        }
+    });    
 }
 
