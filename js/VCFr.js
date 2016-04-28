@@ -169,6 +169,8 @@ function parse_body_line(body_line, colnames, n_line) {
                 myobj[fieldname] = parse_sample(myobj["FORMAT"],value);
                 myobj[fieldname]["FORMAT_ID_GT"] = parse_gt(myobj[fieldname]["FORMAT_ID_GT"],myobj["ALT"] );
                 delete myobj["FORMAT"];
+                delete myobj["ALT"];
+
         }
     }
     res.name = "row_" + n_line;
