@@ -96,7 +96,7 @@ function parse_sample(FORMAT, Sample) {
 	return res;
 }
 
-function parse_gt(gt) {
+function parse_gt(gt, alt) {
 	var res = {};
         res.gtString = gt; //preserve original string
 	gt = gt.split(/([\/\|])/);
@@ -105,8 +105,8 @@ function parse_gt(gt) {
 	if (gt.length > 3) {
 		console.log("polyploid found, parser is compromised");
 	} else if (gt.length === 3) {
-		res.firstParentalAllele = gt[0];
-		res.secondParentalAllele = gt[2];
+		res.firstParentalAllele = alt[gt[0]];
+		res.secondParentalAllele = alt[gt[2]];
 
 		if (gt[1] === "|") {
 			res.phased = true;
@@ -114,7 +114,7 @@ function parse_gt(gt) {
 			res.phased = false;
 		}
 	} else if (gt.length === 1) {
-		res.allele = gt[0];
+		res.allele = alt[gt[0]];
 	}
 
 	return res;
@@ -158,6 +158,7 @@ function parse_body_line(body_line, colnames, n_line) {
                 break;
             case "ALT":
                 myobj[fieldname] = parse_alt(value);
+                break;
             case "INFO":
                 myobj[fieldname] = parse_info(value);
                 break;
@@ -166,7 +167,8 @@ function parse_body_line(body_line, colnames, n_line) {
                 break;
             default:
                 myobj[fieldname] = parse_sample(myobj["FORMAT"],value);
-                myobj[fieldname]["FORMAT_ID_GT"] = parse_gt(myobj[fieldname]["FORMAT_ID_GT"])
+                myobj[fieldname]["FORMAT_ID_GT"] = parse_gt(myobj[fieldname]["FORMAT_ID_GT"],myobj["ALT"] );
+                delete myobj["FORMAT"];
         }
     }
     res.name = "row_" + n_line;
