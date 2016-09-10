@@ -43,8 +43,8 @@ window.onload = function() {
 
 				reader.readAsText(file);	
 			} else {
-				nquadsDisplayArea.innerText = "File not supported!"
-				jsonDisplayArea.innerText = "File not supported!"
+				nquadsDisplayArea.innerText = "Only VCF version 4.2 is supported"
+				jsonDisplayArea.innerText = "Only VCF version 4.2 is supported" 
 			}
 		});
 }
