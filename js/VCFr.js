@@ -99,7 +99,7 @@ function parse_sample(FORMAT, Sample) {
 function parse_gt(gt, ref, alt) {
 	var res = {};
         var all = [ref];
-        all = all.concat(alt)
+        all = all.concat(alt);
         res.gtString = gt; //preserve original string
 	gt = gt.split(/([\/\|])/);
         
@@ -107,7 +107,7 @@ function parse_gt(gt, ref, alt) {
 	if (gt.length > 3) {
 		console.log("polyploid found, parser is compromised");
 	} else if (gt.length === 3) {
-                if (gt[0] == 0){
+                if (gt[0] === 0){
                 res.firstParentalAllele = all[gt[0]];
             } else {
                 
@@ -305,6 +305,10 @@ function vcf2rdf(vcfString, callback) {
 
 function getGenes(){
     Papa.parse("https://rawgit.com/ibl/VCFr/gh-pages/resources/allGenes.txt",  
-    {download: true, complete: function(csv) { console.log(csv)}})    
-}
+    {download: true,
+        complete: function(csv) { 
+            console.log(csv);
+    }}
+        );    
+};
 
