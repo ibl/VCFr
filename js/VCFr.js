@@ -86,12 +86,15 @@ function parse_info(INFO) {
 function parse_sample(FORMAT, Sample) {
 	var res = {};
 	Sample = Sample.split(":");
-	if (FORMAT.length !== Sample.length) {
-		console.log("FORMAT does not have the same length of Sample");
-	} else {
-		for (var i = 0; i < FORMAT.length; i += 1) {
+
+//	if (FORMAT.length !== Sample.length) {
+//		console.log("FORMAT does not have the same length of Sample");
+//	} else {
+
+// This will handle the situation where sample data will have less subfields than those on FORMAT
+		for (var i = 0; i < Sample.length; i += 1) { 
 			res[FORMAT[i]] = Sample[i];
-		}
+//		}
 	}
 	return res;
 }
