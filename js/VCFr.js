@@ -84,12 +84,12 @@ function parse_info(INFO) {
 
 
 function parse_sample(FORMAT, Sample) {
-	var res = {}, i;
+	var res = {};
 	Sample = Sample.split(":");
 	if (FORMAT.length !== Sample.length) {
 		console.log("FORMAT does not have the same length of Sample");
 	} else {
-		for (i = 0; i < FORMAT.length; i += 1) {
+		for (var i = 0; i < FORMAT.length; i += 1) {
 			res[FORMAT[i]] = Sample[i];
 		}
 	}
@@ -174,11 +174,11 @@ function parse_body_line(body_line, colnames, n_line) {
             default:
                 myobj[fieldname] = parse_sample(myobj["FORMAT"],value);
                 myobj[fieldname]["FORMAT_ID_GT"] = parse_gt(myobj[fieldname]["FORMAT_ID_GT"],myobj["REF"], myobj["ALT"] );
-                delete myobj["FORMAT"];
-                delete myobj["ALT"];
-
         }
+
     }
+    delete myobj["FORMAT"];
+    delete myobj["ALT"];
     res.name = "row_" + n_line;
     res.data = myobj;
     return res;
