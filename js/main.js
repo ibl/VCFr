@@ -1,4 +1,4 @@
-//(function(){
+(function(){
 var base_url = window.location.href; 
 console.log(base_url);
 var exampleLink = base_url + "?https://raw.githubusercontent.com/vcftools/vcftools/master/examples/valid-4.1.vcf";
@@ -8,7 +8,7 @@ a.href = exampleLink;
 a.className = "btn btn-default btn-file";
 a.innerText = "Load Demo"
 document.getElementById("demo").appendChild( a );
-//})
+})();
 
 populatePanelsWithReaderResult = function(rr) {
     vcf = parse_vcf(rr)
