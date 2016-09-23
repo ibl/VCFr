@@ -1,8 +1,8 @@
 (function(){
-    if( ! location.search.length>1){
+    if( ! document.baseURI.includes('dataURL') ){
 	var base_url = window.location.href; 
 	console.log(base_url);
-	var exampleLink = base_url + "?https://raw.githubusercontent.com/vcftools/vcftools/master/examples/valid-4.1.vcf";
+	var exampleLink = base_url + "?dataURL=https://raw.githubusercontent.com/vcftools/vcftools/master/examples/valid-4.1.vcf";
 	console.log(exampleLink);
 	var a = document.createElement("a");
 	a.href = exampleLink;
@@ -43,16 +43,25 @@ populatePanelsWithReaderResult = function(rr) {
 window.onload = function() {
 
     // Test if url has ?something
-    if(location.search.length>1){
-	$.get(location.search.slice(1))
+    if(document.baseURI.includes('dataURL')){
+    var fileToGet = document.baseURI.split("?dataURL=")[1];
+    
+	
+	$.get(fileToGet)
 	    .then(function(a){
 		console.log(a);
 		vcf2rdf(a, function(b){
 		    vcfJsonLd = b;
 		    populatePanelsWithReaderResult(a)});
 
-	    });
-	//.then(vcf2jsonLd(vcf, function(a){vcfJsonLd = a}));
+	    })
+	    .fail(function(){
+	    		
+	    	var a = document.createElement("div");
+	    	a.className="alert alert-danger";
+	    	a.innerText = "Failed to get file.\n\nPlease provide a url like the one below:\n\n" + location.pathname + "?dataURL=<link a vcf file>";
+	    	document.getElementById("demo").appendChild(a);
+		});
     }
 
     var fileInput = document.getElementById('fileInput');
