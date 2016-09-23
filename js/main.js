@@ -1,22 +1,24 @@
 (function(){
-var base_url = window.location.href; 
-console.log(base_url);
-var exampleLink = base_url + "?https://raw.githubusercontent.com/vcftools/vcftools/master/examples/valid-4.1.vcf";
-console.log(exampleLink);
-var a = document.createElement("a");
-a.href = exampleLink;
-a.className = "btn btn-default btn-file";
-a.innerText = "Load Demo"
-document.getElementById("demo").appendChild( a );
+    if( ! location.search.length>1){
+	var base_url = window.location.href; 
+	console.log(base_url);
+	var exampleLink = base_url + "?https://raw.githubusercontent.com/vcftools/vcftools/master/examples/valid-4.1.vcf";
+	console.log(exampleLink);
+	var a = document.createElement("a");
+	a.href = exampleLink;
+	a.className = "btn btn-default btn-file";
+	a.innerText = "Load Demo";
+	document.getElementById("demo").appendChild( a );
+    }
 })();
 
 populatePanelsWithReaderResult = function(rr) {
-    vcf = parse_vcf(rr)
-	vcf2jsonLd(vcf, function(a){vcfJsonLd = a});
+    vcf = parse_vcf(rr);
+    vcf2jsonLd(vcf, function(a){vcfJsonLd = a});
 
     vcf2rdf(rr, function(res){
-	var innerJson = JSON.stringify(vcfJsonLd, null, 3)
-	    var blobNquad = URL.createObjectURL(new Blob([res]));
+	var innerJson = JSON.stringify(vcfJsonLd, null, 3);
+	var blobNquad = URL.createObjectURL(new Blob([res]));
 	var blobJSON = URL.createObjectURL(new Blob([innerJson]));
 
 	a = document.createElement("a");
@@ -52,6 +54,7 @@ window.onload = function() {
 	    });
 	//.then(vcf2jsonLd(vcf, function(a){vcfJsonLd = a}));
     }
+
     var fileInput = document.getElementById('fileInput');
 
     fileInput.addEventListener('change', function(e) {
