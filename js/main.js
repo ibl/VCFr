@@ -37,9 +37,6 @@
 	})
 	div.appendChild(ol)
 	
-
-
-	debugger
     }
 })();
 
