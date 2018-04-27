@@ -3,6 +3,7 @@
 	var base_url = window.location.href; 
 	console.log(base_url);
 	var exampleLink = base_url + "?dataURL=https://raw.githubusercontent.com/vcftools/vcftools/master/examples/valid-4.1.vcf";
+	//var exampleLink = base_url + "?dataURL=valid-4.1.vcf";
 	console.log(exampleLink);
 	var a = document.createElement("a");
 	a.href = exampleLink;
@@ -49,7 +50,7 @@ window.onload = function() {
 	
 	$.get(fileToGet)
 	    .then(function(a){
-		console.log(a);
+		console.log(a.slice(0,5000));
 		vcf2rdf(a, function(b){
 		    vcfJsonLd = b;
 		    populatePanelsWithReaderResult(a)});
