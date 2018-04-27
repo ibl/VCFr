@@ -14,7 +14,7 @@
 	var div = document.getElementById("demo")
 	demo.style.textAlign="left"
 	var h = '<h3>Examples</h3>'
-	h +='<p style="color:green">(Click on highlighted filename to process or, to load your own VCF file, see "Choose Files" below)<p>'
+	h +='<p style="color:green">(Click on <span style="background-color:yellow">highlighted</span> filename to process or, to load your own VCF file, see "Choose Files" below)<p>'
 	div.innerHTML=h
 	var exs = [
 		'https://raw.githubusercontent.com/vcftools/vcftools/master/examples/valid-4.1.vcf',
@@ -31,7 +31,7 @@
 		if(ex.match('/')){
 			nm = ex.match(/\/[^\/]+\.vcf/)[0].slice(1)
 		}
-		var h = '<a href="'+location.href+'?dataURL='+ex+'" target="_blank" style="background-color:yellow">'+nm+'</a> (<a href="'+ex+'" target="_blank" style="color:blue">View VCF</a>)'
+		var h = '<a href="'+location.href+'?dataURL='+ex+'" target="_blank" style="background-color:yellow">'+nm+'</a> (<a href="view.html?'+ex+'" target="_blank" style="color:blue">View VCF</a>)'
 		li.innerHTML=h
 		ol.appendChild(li) 
 	})
