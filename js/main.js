@@ -10,6 +10,36 @@
 	a.className = "btn btn-default btn-file";
 	a.innerText = "Load Demo";
 	document.getElementById("demo").appendChild( a );
+	// list more examples
+	var div = document.getElementById("demo")
+	demo.style.textAlign="left"
+	var h = '<h3>Examples</h3>'
+	h +='<p style="color:green">(Click on highlighted filename to process or, to load your own VCF file, see "Choose Files" below)<p>'
+	div.innerHTML=h
+	var exs = [
+		'https://raw.githubusercontent.com/vcftools/vcftools/master/examples/valid-4.1.vcf',
+		'2_CGTACTAGTAGATCGC.vcf',
+		'3_AGGCAGAATATCCTCT.vcf',
+		'29_GCTACGCTTATCCTCT.vcf',
+		'33_AGGCAGAAAGAGTAGA.vcf',
+	]
+	var ol = document.createElement('ol')
+	ol.style.color="maroon"
+	exs.forEach(function(ex){
+		var li = document.createElement('li')
+		var nm = ex
+		if(ex.match('/')){
+			nm = ex.match(/\/[^\/]+\.vcf/)[0].slice(1)
+		}
+		var h = '<a href="'+location.href+'?dataURL='+ex+'" target="_blank" style="background-color:yellow">'+nm+'</a> (<a href="'+ex+'" target="_blank" style="color:blue">View VCF</a>)'
+		li.innerHTML=h
+		ol.appendChild(li) 
+	})
+	div.appendChild(ol)
+	
+
+
+	debugger
     }
 })();
 
