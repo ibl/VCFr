@@ -19,7 +19,7 @@
 	var exs = [
 		'https://raw.githubusercontent.com/vcftools/vcftools/master/examples/valid-4.1.vcf',
 		'2_CGTACTAGTAGATCGC.vcf',
-		'3_AGGCAGAATATCCTCT.vcf',
+		'23_AGGCAGAATATCCTCT.vcf',
 		'29_GCTACGCTTATCCTCT.vcf',
 		'33_AGGCAGAAAGAGTAGA.vcf',
 	]
