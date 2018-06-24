@@ -47,7 +47,7 @@
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 		    </button>
-		    <a class="navbar-brand" >Isomorphic semantic mapping of variant call format (VCF2RDF)</a>
+			<a class="navbar-brand" >Isomorphic semantic mapping of variant call format (VCF2RDF)</a>
 		</div>
 	    </div>
 	</nav>
@@ -55,10 +55,11 @@
 	<div class="container">
 
 	    <div class="starter-template">
-		<h1>Please, select a VCF file!</h1>
+		<h1>Just select a VCF file!</h1>
 		<p class="lead">VCF files can be converted to JSON-LD and Nquads format<br>
 		After parsing, there will be a vcf object "vcfJsonLd" avaliable<br>
-		Just Open the Developer Console if you want to take a look at them<br>
+		Just Open the Developer Console if you want to take a look at them.<br>
+		<p id="manuscript" style="color:navy"><i> Penha EDS, E Iriabho, A Dussaq, DM de Oliveira, JS Almeida (2017) Isomorphic semantic mapping of variant call format (VCF2RDF). Bioinformatics 33(4):547-548 [<a href="https://www.ncbi.nlm.nih.gov/pubmed/27797761" target="_blank" style="background-color:yellow">PMID:27797761</a>].[<a href="http://github.com/ibl/vcfr" target="_blank" style="background-color:yellow">source code</a>],</i></p>
 		</p>
 	    </div>
 
@@ -78,6 +79,11 @@
 		    <pre class="col-md-6 text-left" id="nquadsDisplayArea"><code>Nquads will appear here</code></pre>
 		    <pre class="col-md-6 text-left" id="jsonDisplayArea"><code>JSON will appear here</code></pre>
 		</div>
+		<div id="issues" class="row">
+		<hr>
+		<p>Found a bug? have a suggestion? please <a href="https://github.com/ibl/VCFr/issues/new" target="blank_">submit an issue</a>, thank you !</p>
+		<p><a href="https://github.com/diegopenhanut" target="blank_">Diego Penha</a>, <a href="https://github.com/jonasalmeida" target="blank_">Jonas Almeida</a>, [<a href="https://github.com/ibl/VCFr" target="blank_"> <i class="fa fa-github-alt" aria-hidden="true"></i> source code <i class="fa fa-github-alt" aria-hidden="true"></i> </a>]
+		</div>
 
 
 	    </div><!-- /.container -->
@@ -88,6 +94,7 @@
 	 <!-- Placed at the end of the document so the pages load faster -->
 	 <script src="js/jquery-2.1.4.min.js"></script>
 	 <script src="js/bootstrap.min.js"></script>
+	 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 	 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug 
       <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
