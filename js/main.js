@@ -63,8 +63,9 @@ populatePanelsWithReaderResult = function(rr) {
 	b.innerText = 'Save JSON output';
 	document.getElementById("secondaryButtons").appendChild( b );
 
-	nquadsDisplayArea.innerText = res;
-	jsonDisplayArea.innerText = innerJson;;
+	//nquadsDisplayArea.innerText = res.substring(0,1000)+"\n... Showing the first 1000 characters";
+	nquadsDisplayArea.innerText = res.split('\n', 5).join("\n")+ "\n... Showing the first 5 lines";
+	jsonDisplayArea.innerText = innerJson.split('\n', 5).join("\n")+ "\n... Showing the first 5 lines";
     })
 }
 
